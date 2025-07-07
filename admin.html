@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Administração - Painel de Licitações</title>
+  <style>
+    body { font-family: Arial; max-width: 700px; margin: 20px auto; }
+    label, input, select, textarea { display: block; width: 100%; margin-bottom: 10px; }
+    button { padding: 10px; }
+    table { width: 100%; margin-top: 20px; border-collapse: collapse; }
+    td, th { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    th { background: #003366; color: white; }
+  </style>
+</head>
+<body>
+  <h2>Inserir Licitação</h2>
+
+  <form onsubmit="addLicitacao(); return false;">
+    <label>Nº Processo:</label>
+    <input type="text" id="numero" required />
+
+    <label>Modalidade:</label>
+    <input type="text" id="modalidade" required />
+
+    <label>Objeto:</label>
+    <textarea id="objeto" required></textarea>
+
+    <label>Status:</label>
+    <select id="status">
+      <option>Publicado</option>
+      <option>Em Andamento</option>
+      <option>Suspenso</option>
+    </select>
+
+    <label>Data de Abertura:</label>
+    <input type="date" id="abertura" required />
+
+    <label>Secretaria:</label>
+    <input type="text" id="secretaria" required />
+
+    <label>Pregoeiro Responsável:</label>
+    <input type="text" id="pregoeiro" required />
+
+    <button type="submit">Adicionar Licitação</button>
+  </form>
+
+  <h3>Licitações Cadastradas</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Processo</th><th>Modalidade</th><th>Status</th><th>Pregoeiro</th><th>Excluir</th>
+      </tr>
+    </thead>
+    <tbody id="lista"></tbody>
+  </table>
+
+  <script>
+    function getLicitacoes() {
+      return JSON.parse(localStorage.getItem("licitacoes") || "[]");
+    }
+
+    function salvarLicitacoes(lista) {
+      localStorage.setItem("licitacoes", JSON.stringify(lista));
+      mostrarLicitacoes();
+    }
+
+    function addLicitacao() {
+      const nova = {
+        numero: numero.value,
+        modalidade: modalidade.value,
+        objeto: objeto.value,
+        status: status.value,
+        abertura: abertura.value,
+        secretaria: secretaria.value,
+        pregoeiro: pregoeiro.value
+      };
+      const lista = getLicitacoes();
+      lista.push(nova);
+      salvarLicitacoes(lista);
+      document.querySelector("form").reset();
+    }
+
+    function mostrarLicitacoes() {
+      const lista = getLicitacoes();
+      const tbody = document.getElementById("lista");
+      tbody.innerHTML = "";
+      lista.forEach((l, i) => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${l.numero}</td>
+            <td>${l.modalidade}</td>
+            <td>${l.status}</td>
+            <td>${l.pregoeiro}</td>
+            <td><button onclick="remover(${i})">🗑️</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    function remover(i) {
+      const lista = getLicitacoes();
+      lista.splice(i, 1);
+      salvarLicitacoes(lista);
+    }
+
+    mostrarLicitacoes();
+  </script>
+</body>
+</html>

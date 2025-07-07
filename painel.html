@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel de Licitações</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f2f2f2; margin: 0; padding: 0; }
+    header, footer { background: #003366; color: white; padding: 15px; display: flex; align-items: center; justify-content: space-between; }
+    header img { height: 60px; margin-right: 20px; }
+    header h1 { flex-grow: 1; text-align: center; margin: 0; font-size: 24px; }
+    table { width: 100%; border-collapse: collapse; background: white; }
+    th, td { padding: 12px; border-bottom: 1px solid #ccc; text-align: center; }
+    th { background: #006699; color: white; }
+    .Publicado { color: blue; }
+    .EmAndamento { color: green; }
+    .Suspenso { color: red; }
+    #clock { font-size: 16px; }
+  </style>
+</head>
+<body onload="loadData(); updateClock(); setInterval(updateClock, 1000);">
+
+  <header>
+    <img src="logo-secretaria.jpg" alt="Logo Secretaria de Administração" />
+    <h1>Painel de Licitações em Andamento</h1>
+    <div id="clock"></div>
+  </header>
+
+  <main>
+    <table>
+      <thead>
+        <tr>
+          <th>Nº Processo</th>
+          <th>Modalidade</th>
+          <th>Objeto</th>
+          <th>Status</th>
+          <th>Abertura</th>
+          <th>Secretaria</th>
+          <th>Pregoeiro</th>
+        </tr>
+      </thead>
+      <tbody id="licitacoes">
+      </tbody>
+    </table>
+  </main>
+
+  <footer>
+    Setor de Licitações - Prefeitura de Mirassol d’Oeste | licitacoes@mirassoldoeste.mt.gov.br
+  </footer>
+
+  <script>
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').textContent = now.toLocaleString('pt-BR');
+    }
+
+    function loadData() {
+      const dados = JSON.parse(localStorage.getItem("licitacoes") || "[]");
+      const tbody = document.getElementById("licitacoes");
+      tbody.innerHTML = "";
+      dados.forEach(l => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${l.numero}</td>
+          <td>${l.modalidade}</td>
+          <td>${l.objeto}</td>
+          <td class="${l.status.replaceAll(' ', '')}">${l.status}</td>
+          <td>${l.abertura}</td>
+          <td>${l.secretaria}</td>
+          <td>${l.pregoeiro}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+  </script>
+</body>
+</html>
